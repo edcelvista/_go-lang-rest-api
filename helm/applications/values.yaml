@@ -9,9 +9,11 @@ image:
 #   type: ClusterIP
 #   port: 80
 
-env: []
-  # - name: ENV_NAME
-  #   value: "env-value"
+env: # []
+  - name: SSL_CERT
+    value: "/tls/tls.crt"
+  - name: SSL_KEY
+    value: "/tls/tls.key"
 
 resources: 
   limits:

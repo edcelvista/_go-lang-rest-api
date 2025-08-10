@@ -49,6 +49,10 @@ spec:
           capabilities:
             drop:
             - ALL
+        volumeMounts:
+        - name: tls-volume
+          mountPath: "/tls"    # Path in container
+          readOnly: true
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
@@ -61,3 +65,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       terminationGracePeriodSeconds: 30
+      volumes: 
+      - name: tls-volume
+        secret:
+          secretName: golang-api-leaf

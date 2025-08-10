@@ -24,33 +24,13 @@ spec:
     spec:
       containers:
       - command:
-        - sleep
-        - "3600"
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        name: {{ .Release.Name }}
-        resources: {{- toYaml .Values.resources | nindent 10 }}
-        env:
-        {{- range .Values.env }}
-        - name: {{ .name }}
-          value: {{ .value | quote }}
-        {{- end }}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-        securityContext: 
-          runAsUser: 1000
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
-      - command:
         - sh
         - -c
         - |
           app-arm64
-        image: {{ .Values.busyboximage.repository }}:{{ .Values.busyboximage.tag }}
-        imagePullPolicy: {{ .Values.busyboximage.pullPolicy }}
-        name: {{ .Release.Name }}-busybox
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: {{ .Release.Name }}
         resources: {{- toYaml .Values.resources | nindent 10 }}
         env:
         {{- range .Values.env }}
@@ -69,9 +49,6 @@ spec:
           capabilities:
             drop:
             - ALL
-        volumeMounts:
-        - mountPath: /www
-          name: www-volume
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
@@ -84,6 +61,3 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       terminationGracePeriodSeconds: 30
-      volumes: 
-      - name: www-volume
-        emptyDir: {}

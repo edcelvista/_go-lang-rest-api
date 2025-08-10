@@ -1,0 +1,63 @@
+# Go
+# Build your Go project.
+# Add steps that test, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/go
+# Template requirements: *.go and go.mod files in directory
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  GOBIN:  '$(system.defaultWorkingDirectory)/bin' # Go binaries path
+  dockerHubConn: 'dockerHubConnection'
+  imageName: 'edcelvista/golang-api'
+  goPkgName: pkg
+
+steps:
+
+- script: |
+    mkdir -p '$(GOBIN)'
+    echo '##vso[task.prependpath]$(GOBIN)'
+  displayName: 'Set up the Go workspace'
+
+- script: |
+    ls -la $(system.defaultWorkingDirectory)
+  displayName: 'List files in the working directory'
+
+- script: |
+    cd pkg
+    go version
+    if [ ! -f go.mod ]; then
+      go mod init $(goPkgName)
+    fi
+    go mod tidy
+    go mod download
+    if [ -f Gopkg.toml ]; then
+      curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+      dep ensure
+    fi
+    GOOS=linux GOARCH=amd64 go build -o $(system.defaultWorkingDirectory)/app
+    # GOOS=linux GOARCH=arm64 go build -o $(system.defaultWorkingDirectory)/app-arm64
+  workingDirectory: '$(system.defaultWorkingDirectory)'
+  displayName: '[app] Get dependencies, then build'
+
+- task: Docker@2
+  displayName: Build Docker Image
+  inputs:
+    command: 'build'
+    repository: '$(imageName)'
+    Dockerfile: '**/Dockerfile'  # or specify the path directly e.g., 'Dockerfile'
+    tags: |
+      $(Build.BuildId)
+
+- task: Docker@2
+  displayName: Push Docker Image
+  inputs:
+    command: 'push'
+    repository: '$(imageName)'
+    tags: |
+      $(Build.BuildId)
+    containerRegistry: $(dockerHubConn)

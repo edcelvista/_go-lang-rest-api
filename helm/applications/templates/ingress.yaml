@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: golang-api
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: golang-api.oci-k8s.edcelvista.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: golang-api
+            port:
+              number: 8443
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - golang-api.oci-k8s.edcelvista.com
+    secretName: golang-api-leaf

@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: golang-api
+spec:
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: https
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    app: {{ .Release.Name }}
+  sessionAffinity: None
+  type: ClusterIP

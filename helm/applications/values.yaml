@@ -1,0 +1,22 @@
+replicaCount: 0
+
+image:
+  repository: edcelvista/golang-api
+  tag: "0.0.1"
+  pullPolicy: IfNotPresent
+
+# service:
+#   type: ClusterIP
+#   port: 80
+
+env: []
+  # - name: ENV_NAME
+  #   value: "env-value"
+
+resources: 
+  limits:
+    cpu: 200m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 512Mi

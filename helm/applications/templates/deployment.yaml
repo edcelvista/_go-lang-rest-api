@@ -53,6 +53,8 @@ spec:
         - name: tls-volume
           mountPath: "/tls"    # Path in container
           readOnly: true
+        - name: nfs-pvc
+          mountPath: "/mnt"   # Path in container where NFS will be mounted
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
@@ -69,3 +71,6 @@ spec:
       - name: tls-volume
         secret:
           secretName: golang-api-leaf
+      - name: nfs-pvc
+        persistentVolumeClaim:
+          claimName: nfs-pvc

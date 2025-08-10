@@ -18,4 +18,7 @@ spec:
               number: 8443
         path: /
         pathType: Prefix
-  tls: {}
+  # tls:
+  # - hosts:
+  #   - golang-api.oci-k8s.edcelvista.com
+  #   secretName: golang-api-leaf

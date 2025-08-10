@@ -58,7 +58,7 @@ spec:
           value: {{ .value | quote }}
         {{- end }}
         port:
-        - containerPort: 8080
+        - containerPort: 8443
           name: http
           protocol: TCP
         terminationMessagePath: /dev/termination-log

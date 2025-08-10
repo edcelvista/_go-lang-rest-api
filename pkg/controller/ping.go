@@ -15,7 +15,7 @@ func PingHandlerGET(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	reqParams := mux.Vars(r)
 
-	res := Model.Pong{Pong: "pong", Message: reqParams}
+	res := Model.Pong{Headers: map[string]string{"Headers": fmt.Sprintf("%+v", r.Header), "Host": r.Host, "Source": r.RemoteAddr}, Pong: "pong", Message: reqParams}
 	json.NewEncoder(w).Encode(res)
 }
 
@@ -30,7 +30,7 @@ func PingHandlerPOST(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	res := Model.Pong{Pong: "pong", Message: parsedUserRequest.Message}
+	res := Model.Pong{Headers: map[string]string{"Headers": fmt.Sprintf("%+v", r.Header), "Host": r.Host, "Source": r.RemoteAddr}, Pong: "pong", Message: parsedUserRequest.Message}
 	json.NewEncoder(w).Encode(res)
 }
 

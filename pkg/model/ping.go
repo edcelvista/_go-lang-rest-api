@@ -2,6 +2,7 @@ package model
 
 type Pong struct {
 	Pong    string
+	Headers interface{}
 	Message map[string]string
 }
 

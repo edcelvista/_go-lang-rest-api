@@ -2,6 +2,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: golang-api
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
   ingressClassName: nginx
   rules:
@@ -15,7 +18,4 @@ spec:
               number: 8443
         path: /
         pathType: Prefix
-  tls:
-  - hosts:
-    - golang-api.oci-k8s.edcelvista.com
-    secretName: golang-api-leaf
+  tls: {}

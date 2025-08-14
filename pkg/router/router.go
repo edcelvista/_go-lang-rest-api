@@ -2,87 +2,25 @@ package router
 
 import (
 	"crypto/tls"
-	"crypto/x509"
-	"encoding/pem"
 	"log"
 	"net/http"
 	"os"
-	"time"
+
+	Lib "pkg/lib"
+	Routes "pkg/routes"
 
 	"github.com/gorilla/mux"
-
 	"github.com/joho/godotenv"
-
-	Controller "pkg/controller"
-	Lib "pkg/lib"
 )
 
-type Router struct {
-	r *mux.Router
-}
-
-type CertsAndKeys struct {
-	cert string
-	key  string
-}
-
-func (m *CertsAndKeys) checkCerts() {
-	// Load certificate
-	certPath := m.cert
-	certData, err := os.ReadFile(certPath)
-	if err != nil {
-		log.Fatalf("‼️ Error reading certificate: %v %v", err, m.cert)
-	}
-
-	// Decode the PEM data
-	block, _ := pem.Decode(certData)
-	if block == nil {
-		log.Fatalf("Failed to decode PEM block")
-	}
-
-	// Parse certificate
-	cert, err := x509.ParseCertificate(block.Bytes)
-	if err != nil {
-		log.Fatalf("‼️ Error parsing certificate: %v %v", err, m.cert)
-	}
-
-	// Check if the certificate is expired
-	currentTime := time.Now()
-	if currentTime.After(cert.NotAfter) {
-		log.Println("‼️ Certificate has expired.")
-	} else {
-		log.Println("💡 Certificate is valid.")
-	}
-
-	// Check the NotBefore field (if the certificate is not yet valid)
-	if currentTime.Before(cert.NotBefore) {
-		log.Println("‼️ Certificate is not yet valid.")
-	} else {
-		log.Println("💡 Certificate is within the valid period.")
-	}
-
-	// Optionally, you could also validate other parts, like the issuer and subject
-	log.Println("🔑 Issuer:", cert.Issuer)
-	log.Println("🔑 Subject:", cert.Subject)
-	log.Println("🔑 Not After:", cert.NotAfter)
-	log.Println("🔑 Not Before:", cert.NotBefore)
-}
-
-func (m *Router) PingRoutes() *mux.Router {
-	m.r.HandleFunc("/ping/{name}", Controller.PingHandlerGET).Methods("GET")
-	m.r.HandleFunc("/ping", Controller.PingHandlerPOST).Methods("POST")
-	m.r.HandleFunc("/echo", Controller.EchoHandlerPOST).Methods("POST")
-	return m.r
-}
-
-func Run() {
+func environ() (cert string, key string, port string) {
 	// Load .env file
 	err := godotenv.Load()
-	port := ":8443"
+	port = ":8443"
 
 	// TLS config
-	cert := "./tls.crt"
-	key := "./tls.key"
+	cert = "./tls.crt"
+	key = "./tls.key"
 
 	if err != nil {
 		log.Println("⚠️ Error loading .env file")
@@ -104,17 +42,42 @@ func Run() {
 		log.Println("💡 Found .env")
 	}
 
+	tlsCertsAndKey := Lib.CertsAndKeys{
+		Cert: cert,
+		Key:  key,
+	}
+
+	tlsCertsAndKey.CheckCerts()
+	Lib.DebuggerInit()
+
+	return cert, key, port
+}
+
+func registerRouters(router *Routes.Router) {
+	router.PingRoutes()
+	router.CrudRoutes()
+}
+
+func bindRouters(muxRouter *mux.Router) {
+	// Bind the router to the muxRouter
+	http.Handle("/", muxRouter)
+
+}
+
+func Run() {
+	cert, key, port := environ()
+
 	// Init router
 	muxRouter := mux.NewRouter()
-	router := Router{
-		r: muxRouter,
+	router := Routes.Router{
+		R: muxRouter,
 	}
 
 	// register routers
-	router.PingRoutes()
+	registerRouters(&router)
 
 	// bind routers
-	http.Handle("/", muxRouter)
+	bindRouters(muxRouter)
 
 	// TLS config
 	cfg := &tls.Config{
@@ -128,21 +91,12 @@ func Run() {
 		TLSConfig: cfg,
 	}
 
-	tlsCertsAndKey := CertsAndKeys{
-		cert: cert,
-		key:  key,
-	}
-
-	tlsCertsAndKey.checkCerts()
-	Lib.Init()
-
 	log.Printf("💡 ⚡️ Mux API Running 📦 %s with 🔑 %v %v \n", port, cert, key)
 	// err = http.ListenAndServe(port, muxRouter)
 
 	// TLS config
-	err = server.ListenAndServeTLS(cert, key)
+	err := server.ListenAndServeTLS(cert, key)
 	if err != nil {
 		log.Fatalf("‼️ Failed to start router %s with %v %v", err, cert, key)
 	}
-
 }

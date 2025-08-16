@@ -18,7 +18,7 @@ import (
 
 func main() {
 	if os.Getenv("APP_ENV") == "development" {
-		log.Println("Enabling pprof for profiling")
+		log.Println("👮‍♂️ Enabling pprof for profiling")
 		go func() {
 			log.Println(http.ListenAndServe("localhost:6060", nil))
 		}()

@@ -32,7 +32,7 @@ func DBInit() (client any) {
 		}
 
 		ctx, err := dbConfig.Init()
-		log.Println("💡 Database Initialized 🗄️ ...")
+		log.Println("🗄️ Database Initialized")
 		if err != nil {
 			log.Fatalf("‼️ Error initializing database context: %v", err)
 		}

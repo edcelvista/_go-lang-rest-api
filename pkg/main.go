@@ -6,7 +6,7 @@ import (
 	_ "net/http/pprof" // automatically expose /debug/pprof/
 	"os"
 
-	Router "pkg/router"
+	router "pkg/router"
 	// CPU Profiling: /debug/pprof/profile?seconds=30 (takes a 30-second snapshot)
 	// Goroutines: /debug/pprof/goroutine
 	// Heap (memory): /debug/pprof/heap
@@ -24,5 +24,5 @@ func main() {
 		}()
 	}
 
-	Router.Run()
+	router.Run()
 }

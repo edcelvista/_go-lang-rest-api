@@ -6,23 +6,21 @@ import (
 	"net/http"
 	"os"
 
-	Lib "pkg/lib"
-	Routes "pkg/routes"
+	lib "pkg/lib"
+	routes "pkg/routes"
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
 
 func environ() (cert string, key string, port string) {
-	// Load .env file
-	err := godotenv.Load()
-	port = ":8443"
-
 	// TLS config
 	cert = "./tls.crt"
 	key = "./tls.key"
+	port = ":8443"
 
-	if err != nil {
+	// Load .env file
+	if err := godotenv.Load(); err != nil {
 		log.Println("⚠️ Error loading .env file")
 		// Get environment variables
 		if os.Getenv("PORT") != "" {
@@ -42,18 +40,18 @@ func environ() (cert string, key string, port string) {
 		log.Println("💡 Found .env")
 	}
 
-	tlsCertsAndKey := Lib.CertsAndKeys{
+	tlsCertsAndKey := lib.CertsAndKeys{
 		Cert: cert,
 		Key:  key,
 	}
 
 	tlsCertsAndKey.CheckCerts()
-	Lib.DebuggerInit()
+	lib.DebuggerInit()
 
 	return cert, key, port
 }
 
-func registerRouters(router *Routes.Router) {
+func registerRouters(router *routes.Router) {
 	router.PingRoutes()
 	router.CrudRoutes()
 }
@@ -61,7 +59,6 @@ func registerRouters(router *Routes.Router) {
 func bindRouters(muxRouter *mux.Router) {
 	// Bind the router to the muxRouter
 	http.Handle("/", muxRouter)
-
 }
 
 func Run() {
@@ -69,7 +66,7 @@ func Run() {
 
 	// Init router
 	muxRouter := mux.NewRouter()
-	router := Routes.Router{
+	router := routes.Router{
 		R: muxRouter,
 	}
 
@@ -95,8 +92,7 @@ func Run() {
 	// err = http.ListenAndServe(port, muxRouter)
 
 	// TLS config
-	err := server.ListenAndServeTLS(cert, key)
-	if err != nil {
+	if err := server.ListenAndServeTLS(cert, key); err != nil {
 		log.Fatalf("‼️ Failed to start router %s with %v %v", err, cert, key)
 	}
 }

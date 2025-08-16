@@ -11,6 +11,13 @@ import (
 	Model "pkg/model"
 )
 
+func HealthHandlerGET(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	res := Model.HealthRes{Status: "Running"}
+	json.NewEncoder(w).Encode(res)
+}
+
 func PingHandlerGET(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	reqParams := mux.Vars(r)

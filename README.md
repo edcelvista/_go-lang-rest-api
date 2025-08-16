@@ -13,3 +13,12 @@ DB_URI="mongodb+srv://<username>:<password>@<mongodb-url>.mongodb.net/?retryWrit
 ```
 ./_go-run.sh
 ```
+
+## PPOF
+```
+go tool pprof -http=localhost:6061 "http://localhost:6060/debug/pprof/profile?seconds=30"
+```
+Requires: `raphviz`
+```
+brew install graphviz
+```

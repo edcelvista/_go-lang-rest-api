@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -22,7 +23,8 @@ func DBProcess(db DB) (res any, err error) {
 }
 
 func DBInit() (client any) {
-	if err := godotenv.Load(); err != nil {
+	rootDir := fmt.Sprintf("%v/.env", os.Getenv("ROOT_DIR"))
+	if err := godotenv.Load(rootDir); err != nil {
 		log.Fatalf("‼️ Error loading .env file")
 	} else {
 		connString, _ := os.LookupEnv("DB_URI")
@@ -41,6 +43,7 @@ func DBInit() (client any) {
 		if err != nil {
 			log.Fatalf("‼️ Error Connecting database context: %v", err)
 		}
+		log.Println("🛜 Database Connected")
 	}
 
 	return client

@@ -5,6 +5,7 @@ import (
 	"encoding/pem"
 	"log"
 	"os"
+	"path/filepath"
 	model "pkg/model"
 	"reflect"
 	"strings"
@@ -92,4 +93,12 @@ func CountInterfaceValues[T model.Number](v interface{}) (count T) {
 	default:
 		return 1 // For single values
 	}
+}
+
+func GetAppRoot() (string, error) {
+	wd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Abs(wd)
 }

@@ -1,4 +1,5 @@
 *.crt
 *.key
-bin/
+app
+app-arm64
 .env

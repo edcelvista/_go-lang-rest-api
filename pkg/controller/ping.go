@@ -8,13 +8,13 @@ import (
 
 	"github.com/gorilla/mux"
 
-	Model "pkg/model"
+	model "pkg/model"
 )
 
 func HealthHandlerGET(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	res := Model.HealthRes{Status: "Running"}
+	res := &model.HealthRes{Status: "Running"}
 	json.NewEncoder(w).Encode(res)
 }
 
@@ -22,13 +22,13 @@ func PingHandlerGET(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	reqParams := mux.Vars(r)
 
-	res := Model.Pong{Headers: map[string]string{"Headers": fmt.Sprintf("%+v", r.Header), "Host": r.Host, "Source": r.RemoteAddr}, Pong: "pong", Message: reqParams}
+	res := &model.Pong{Headers: map[string]string{"Headers": fmt.Sprintf("%+v", r.Header), "Host": r.Host, "Source": r.RemoteAddr}, Pong: "pong", Message: reqParams}
 	json.NewEncoder(w).Encode(res)
 }
 
 func PingHandlerPOST(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var parsedUserRequest Model.Ping
+	var parsedUserRequest model.Ping
 	err := json.NewDecoder(r.Body).Decode(&parsedUserRequest)
 	if err != nil {
 		log.Printf("‼️ Invalid JSON %v", err.Error())
@@ -37,7 +37,7 @@ func PingHandlerPOST(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	res := Model.Pong{Headers: map[string]string{"Headers": fmt.Sprintf("%+v", r.Header), "Host": r.Host, "Source": r.RemoteAddr}, Pong: "pong", Message: parsedUserRequest.Message}
+	res := &model.Pong{Headers: map[string]string{"Headers": fmt.Sprintf("%+v", r.Header), "Host": r.Host, "Source": r.RemoteAddr}, Pong: "pong", Message: parsedUserRequest.Message}
 	json.NewEncoder(w).Encode(res)
 }
 
@@ -52,6 +52,6 @@ func EchoHandlerPOST(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	res := Model.Echo{EchoHeaders: map[string]string{"Headers": fmt.Sprintf("%+v", r.Header), "Host": r.Host, "Source": r.RemoteAddr}, EchoData: data}
+	res := &model.Echo{EchoHeaders: map[string]string{"Headers": fmt.Sprintf("%+v", r.Header), "Host": r.Host, "Source": r.RemoteAddr}, EchoData: data}
 	json.NewEncoder(w).Encode(res)
 }

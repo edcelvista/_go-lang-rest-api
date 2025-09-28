@@ -15,26 +15,26 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var client = lib.DBInit()
+var client = lib.GetDBClient()
 
 func CrudHandlerLIST(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	db := lib.MongoDB{
+	db := &lib.MongoDB{
 		Client:   client.(*mongo.Client),
 		Action:   "list",
 		Database: "golangapi",
 		Table:    "messages",
 	}
 
-	data, err := lib.DBProcess(&db)
+	data, err := lib.DBProcess(db)
 	if err != nil {
 		log.Printf("‼️ Failed Listing Records %v", err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	res := model.CrudResWithBody{Action: r.Method, Response: data}
+	res := &model.CrudResWithBody{Action: r.Method, Response: data}
 	json.NewEncoder(w).Encode(res)
 }
 
@@ -49,7 +49,7 @@ func CrudHandlerGET(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db := lib.MongoDB{
+	db := &lib.MongoDB{
 		Client:   client.(*mongo.Client),
 		Action:   "find",
 		Database: "golangapi",
@@ -57,14 +57,14 @@ func CrudHandlerGET(w http.ResponseWriter, r *http.Request) {
 		Filter:   &bson.M{"_id": objID},
 	}
 
-	data, err := lib.DBProcess(&db)
+	data, err := lib.DBProcess(db)
 	if err != nil {
 		log.Printf("‼️ Failed Fetching Record %v", err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	res := model.CrudResWithBody{Action: r.Method, MessageId: reqParams["messageId"], Response: data}
+	res := &model.CrudResWithBody{Action: r.Method, MessageId: reqParams["messageId"], Response: data}
 	json.NewEncoder(w).Encode(res)
 }
 
@@ -80,7 +80,7 @@ func CrudHandlerPOST(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	db := lib.MongoDB{
+	db := &lib.MongoDB{
 		Client:   client.(*mongo.Client),
 		Action:   "insert",
 		Database: "golangapi",
@@ -88,14 +88,14 @@ func CrudHandlerPOST(w http.ResponseWriter, r *http.Request) {
 		Payload:  parsedRequestBody,
 	}
 
-	objectId, err := lib.DBProcess(&db)
+	objectId, err := lib.DBProcess(db)
 	if err != nil {
 		log.Printf("‼️ Failed Inserting Record %v", err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	res := model.CrudRes{Action: r.Method, MessageId: objectId.(string)}
+	res := &model.CrudRes{Action: r.Method, MessageId: objectId.(string)}
 	json.NewEncoder(w).Encode(res)
 }
 
@@ -110,7 +110,7 @@ func CrudHandlerDELETE(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db := lib.MongoDB{
+	db := &lib.MongoDB{
 		Client:   client.(*mongo.Client),
 		Action:   "delete",
 		Database: "golangapi",
@@ -118,13 +118,13 @@ func CrudHandlerDELETE(w http.ResponseWriter, r *http.Request) {
 		Filter:   &bson.M{"_id": objID},
 	}
 
-	data, err := lib.DBProcess(&db)
+	data, err := lib.DBProcess(db)
 	if err != nil {
 		log.Printf("‼️ Failed Delete Record %v", err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	res := model.CrudResWithBody{Action: r.Method, MessageId: reqParams["messageId"], Response: data}
+	res := &model.CrudResWithBody{Action: r.Method, MessageId: reqParams["messageId"], Response: data}
 	json.NewEncoder(w).Encode(res)
 }

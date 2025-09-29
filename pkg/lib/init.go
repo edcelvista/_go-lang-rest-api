@@ -16,12 +16,17 @@ var DB_URI string
 func init() {
 	rootDir := fmt.Sprintf("%v/.env", os.Getenv("ROOT_DIR"))
 	if err := godotenv.Load(rootDir); err != nil {
-		log.Fatalf("Error ROOT_DIR")
-	}
+		log.Fatalf("Error ROOT_DIR defaulting to getenv")
 
-	DB_URI, e = os.LookupEnv("DB_URI")
-	if !e {
-		log.Fatalf("Error router DB_URI")
+		DB_URI = os.Getenv("DB_URI")
+		if DB_URI == "" {
+			log.Fatalf("Error router DB_URI")
+		}
+	} else {
+		DB_URI, e = os.LookupEnv("DB_URI")
+		if !e {
+			log.Fatalf("Error router DB_URI")
+		}
 	}
 
 	dBCreateClient()

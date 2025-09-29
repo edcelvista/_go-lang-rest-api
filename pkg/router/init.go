@@ -23,7 +23,7 @@ func init() {
 
 		PORT = os.Getenv("PORT")
 		if PORT == "" {
-			log.Fatalf("Error router PORT")
+			log.Printf("Error router PORT")
 		}
 
 		SSL_CERT = os.Getenv("SSL_CERT")

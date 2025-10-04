@@ -52,11 +52,11 @@ func (r *MongoDB) Execute() (res any, err error) {
 		}
 		defer cur.Close(context.Background())
 
-		var recordList model.DBMessageRecordList
+		var recordList model.DBRecordList
 		var ctr int64
 		for cur.Next(context.Background()) {
 			// To decode into a struct, use cursor.Decode()
-			result := model.DBMessageRecord{}
+			result := model.DBRecord{}
 
 			if err := cur.Decode(&result); err != nil {
 				log.Fatal(err)
@@ -64,7 +64,7 @@ func (r *MongoDB) Execute() (res any, err error) {
 				return nil, err
 			}
 
-			recordList.MessageList = append(recordList.MessageList, result)
+			recordList.RecordList = append(recordList.RecordList, result)
 			ctr += 1
 		}
 
@@ -83,7 +83,7 @@ func (r *MongoDB) Execute() (res any, err error) {
 			return nil, err
 		}
 
-		var record model.DBMessageRecord
+		var record model.DBRecord
 		if err = bson.Unmarshal(res, &record); err != nil {
 			log.Printf("‼️ Failed Parsing Record %v", err.Error())
 			return nil, err
@@ -117,7 +117,7 @@ func (r *MongoDB) Execute() (res any, err error) {
 			return nil, err
 		}
 
-		var record model.DBMessageDeleted
+		var record model.DBRecordDeleted
 		record.DeletedCount = resData.DeletedCount
 		return record, nil
 

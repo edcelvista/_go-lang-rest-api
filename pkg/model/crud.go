@@ -21,18 +21,18 @@ type CrudResWithBody struct {
 	Response  interface{}
 }
 
-type DBMessageRecordList struct {
-	MessageList []DBMessageRecord
-	Count       int64
+type DBRecordList struct {
+	RecordList []DBRecord
+	Count      int64
 }
 
-type DBMessageRecord struct {
-	MessageId string            `bson:"_id,omitempty"`
-	Message   map[string]string `bson:"message,omitempty"`
-	Dt        int64             `bson:"dt,omitempty"`
+type DBRecord struct {
+	RecordId string            `bson:"_id,omitempty"`
+	Record   map[string]string `bson:"record,omitempty"`
+	Dt       int64             `bson:"dt,omitempty"`
 }
 
-type DBMessageDeleted struct {
+type DBRecordDeleted struct {
 	DeletedCount int64
 }
 

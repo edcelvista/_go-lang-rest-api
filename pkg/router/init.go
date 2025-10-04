@@ -19,11 +19,11 @@ var ROOT_DIR string
 func init() {
 	rootDir := fmt.Sprintf("%v/.env", os.Getenv("ROOT_DIR"))
 	if err := godotenv.Load(rootDir); err != nil {
-		log.Printf("Error ROOT_DIR defaulting to getenv")
+		log.Printf("Warn ROOT_DIR defaulting to getenv")
 
 		PORT = os.Getenv("PORT")
 		if PORT == "" {
-			log.Printf("Error router PORT")
+			log.Printf("Warn router PORT")
 		}
 
 		SSL_CERT = os.Getenv("SSL_CERT")

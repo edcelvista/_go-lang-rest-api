@@ -13,6 +13,12 @@ import (
 	// Block: /debug/pprof/block
 	// OR
 	// go tool pprof -http=localhost:6061 "http://localhost:6060/debug/pprof/profile?seconds=30"
+	// go tool pprof http://localhost:6060/debug/pprof/heap
+	// # wait 1–5 minutes
+	// go tool pprof http://localhost:6060/debug/pprof/heap
+	// go tool pprof -diff_base=heap1.pprof heap2.pprof
+	// go tool pprof -http=localhost:6061 "http://localhost:6060/debug/pprof/heap?gc=1" # force GC to confirm leak, if memory stays means leaks
+	// go tool pprof http://localhost:6060/debug/pprof/goroutine # check goroutine leaks common cause
 	// Requires brew install graphviz
 )
 
